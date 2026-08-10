@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<div class="min-h-screen bg-gray-100 flex flex-col">
+    <!-- Header (Fixed at Top) -->
+    <header class="bg-indigo-700 text-white p-4 shadow-lg flex justify-between items-center">
+        <div class="text-xl font-bold">
+            Hospital Management System (MVP)
+        </div>
+        <!-- User/Login Status Placeholder (for Phase 3) -->
+        <div class="text-sm">
+            <a href="/login" class="hover:underline">Login</a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar (Navigation Menu) -->
+        <nav class="w-64 bg-white p-4 shadow-xl hidden md:block overflow-y-auto">
+            <NavMenu /> @* Reference to the next task's component *@
+        </nav>
+
+        <!-- Page Content (Where your Blazor components load) -->
+        <main class="flex-1 p-6 overflow-y-auto">
+            @Body
+        </main>
+    </div>
+</div>yy

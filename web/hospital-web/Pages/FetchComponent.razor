@@ -1,0 +1,31 @@
+﻿@page "/fetchapidata"
+@inject HttpClient Http
+
+<h3>Fetch API Data</h3>
+
+@if (data == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>Data from API: @data</p>
+}
+
+@code {
+    private string data;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Use the full URL of your API endpoint during development
+            var apiUrl = "http://localhost:5297/api/users/get-users"; // Replace with your API info
+            data = await Http.GetStringAsync(apiUrl);
+        }
+        catch (Exception ex)
+        {
+            data = $"Error: {ex.Message}";
+        }
+    }
+}

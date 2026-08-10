@@ -1,0 +1,164 @@
+﻿@page "/doctors/{id:int}"
+@inject DoctorService DoctorService
+@inject NavigationManager NavigationManager
+<h1 class="visualy-hidden">Doctor Profile</h1>
+
+
+@if (doctor == null)
+{
+    <div class="flex justify-center items-center min-h-[60vh]">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p class="ml-4 text-gray-600">Loading doctor profile...</p>
+    </div>
+}
+else
+{
+    <div class="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+        <!-- Hero / Header Section -->
+        <div class="bg-gradient-to-br from-blue-50 to-white rounded-2xl shadow-lg p-6 md:p-10 mb-10">
+            <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                <!-- Avatar -->
+                <div class="flex-shrink-0">
+                    <div class="w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white shadow-xl bg-blue-100 flex items-center justify-center">
+
+
+                        <span class="text-5xl md:text-7xl font-bold text-blue-600">
+                            @doctor.FirstName.Substring(0, 1)@doctor.LastName.Substring(0, 1)
+                        </span>
+
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                        Dr. @doctor.FullName
+                    </h1>
+
+                    <span class="inline-block bg-blue-100 text-blue-800 text-lg font-medium px-5 py-1.5 rounded-full mb-4">
+                        @doctor.SpecialtyName
+                    </span>
+
+                    <div class="flex flex-wrap justify-center md:justify-start gap-6 text-gray-700 mt-4">
+                        <div>
+                            <span class="font-semibold">Experience</span><br>
+                            @doctor.YearsOfExperience years
+                        </div>
+                        <div>
+                            <span class="font-semibold">License</span><br>
+                            #@doctor.LicenseNumber
+                        </div>
+                        @if (!string.IsNullOrEmpty(doctor.Email))
+                        {
+                            <div>
+                                <span class="font-semibold">Email</span><br>
+                                <a href="mailto:@doctor.Email" class="text-blue-600 hover:underline">
+                                    @doctor.Email
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-8 flex flex-wrap gap-4 justify-center md:justify-start">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition">
+                            Book Appointment
+                        </button>
+
+
+                        <a href="/doctors/edit/@doctor.Id"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-xl border border-gray-300 transition">
+                            Edit Profile
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left: About & Bio -->
+            <div class="lg:col-span-2 space-y-10">
+                <section>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">About Dr. @doctor.LastName</h2>
+                    <p class="text-gray-700 leading-relaxed text-lg">
+                        @doctor.ProfileDescription
+                    </p>
+                </section>
+
+                <section>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Qualifications</h3>
+                    <ul class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-3 mt-1">•</span>
+                            @doctor.QualificationName
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-3 mt-1">•</span>
+                            Specialist Training in @doctor.SpecialtyName – Steve Biko Academic Hospital (2018–2022)
+                        </li>
+                        <!-- Add more dynamically if you store them -->
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Right: Quick Info Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 sticky top-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Quick Information</h3>
+
+                    <dl class="space-y-4 text-gray-700">
+                        <div class="flex justify-between">
+                            <dt class="font-medium">Specialty</dt>
+                            <dd class="text-right">@doctor.SpecialtyName</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium">Experience</dt>
+                            <dd class="text-right">@doctor.YearsOfExperience years</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="font-medium">License #</dt>
+                            <dd class="text-right">@doctor.LicenseNumber</dd>
+                        </div>
+                        @if (!string.IsNullOrEmpty(doctor.Email))
+                        {
+                            <div class="flex justify-between">
+                                <dt class="font-medium">Contact</dt>
+                                <dd class="text-right">
+                                    <a href="mailto:@doctor.Email" class="text-blue-600 hover:underline">
+                                        @doctor.Email
+                                    </a>
+                                </dd>
+                            </div>
+                        }
+                    </dl>
+
+                    <button class="w-full mt-8 bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-xl transition shadow-md">
+                        Request Consultation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Doctor? doctor;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            doctor = await DoctorService.GetByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading doctor profile: {ex.Message}";
+        }
+    }
+
+}

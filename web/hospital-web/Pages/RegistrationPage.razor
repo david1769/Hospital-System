@@ -1,0 +1,101 @@
+﻿@page "/register"
+@inject HttpClient Http
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject RegisterModel registerModel
+
+
+
+<h3>Registration</h3>
+
+
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl px-8 py-10">
+        <h1 class="text-3xl font-bold text-center text-gray-900 mb-8">
+            Hospital Staff Registration
+        </h1>
+
+<EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Email</label>
+        <InputText @bind-Value="registerModel.Email" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>UserName</label>
+        <InputText @bind-Value="registerModel.Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <InputText type="password" @bind-Value="registerModel.Password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Confirm Password</label>
+        <InputText type="password" @bind-Value="registerModel.ConfirmPassword" class="form-control" />
+    </div>
+            <button type="submit" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-150 shadow-md disabled:opacity-50" disabled="@isLoading" >Register</button>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    </EditForm>
+    </div>
+</div>
+@code {
+
+    private bool isLoading;
+    private string? errorMessage;
+    private string? successMessage;
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errorMessage = null;
+        successMessage = null;
+
+        if (registerModel.Password != registerModel.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match.";
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Auth/register", registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                if (result?.Token != null)
+                {
+                    await AuthService.SetTokenAsync(result.Token);
+                    successMessage = "Registration successful! Logging you in...";
+                    Navigation.NavigateTo("/login");  
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Registration failed: {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+
+        isLoading = false;
+    }
+
+}

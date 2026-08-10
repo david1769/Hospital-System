@@ -1,0 +1,230 @@
+﻿@page "/appointment-scheduler"
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject DoctorService DoctorService
+@inject ReferenceDataService ReferenceDataService   
+
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Appointment Schedule</h1>
+
+    <!--Filters - Tailwind styled -->
+
+    <div class="mb-6 flex flex-wrap gap-4 align-items-end bg-white p-5 rounded-xl-around shadow-md border border-gray-200">
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Doctor</label>
+            <InputSelect @bind-value="SelectedDoctorId" @bind:after="UpdateFiltersAndRefresh" class="block w-56 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 text-sm-center py-2 px-3">
+                <option value="0">--Please Select--</option>
+                @foreach (var doctor in doctors)
+                {
+                    <option value="@doctor.Id">@doctor.FullName</option>
+                }
+
+        </InputSelect>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <select @bind="SelectedDeptId" @bind:after="UpdateFiltersAndRefresh" class="block w-56 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3">
+                <option value="0">--Please Select--</option>
+                @foreach (var department in departments)
+                {
+                    <option value="@department.Id">@department.Name</option>
+                }
+                
+            </select>
+
+    </div>
+        <button @onclick="RefreshCalendarAsync"
+        class="px-5 py-2.5 bg-indigo-600 text-bg-danger-white font-medium rounded-lg hover:bg-indigo-700 transition">
+    Refresh
+    </button>
+
+    <AppointmentFormModal @ref="formModal" OnAppointmentCreated="RefreshCalendarAsync" />
+        <button @onclick="OpenNewAppointment" class="px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg=green-700 transition ml-auto">
+
+            + New Appointment
+
+    </button>
+
+    </div>
+
+
+    <div id="calendar" class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200" style="min-height: 700px;"></div>
+</div>
+
+
+
+
+@code {
+
+    private string? SelectedDoctorId { get; set; }
+    private string? SelectedDeptId { get; set; }
+    private List<Doctor> doctors = new();
+    private List<ReferenceData> departments = new();
+
+    private AppointmentFormModal? formModal;
+
+
+    private async Task OpenNewAppointment()
+    {
+        if (formModal != null)
+        {
+            await formModal.Show();  
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDoctors();
+        await LoadDepartments();
+    }   
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializeCalendarAsync();
+        }
+    }
+
+    private async Task InitializeCalendarAsync()
+    {
+        // Optional: load any modules if using modular import later
+        // For global CDN this is usually not needed
+        var dotNetRef = DotNetObjectReference.Create(this);
+        var apiBase = "http://localhost:5297";
+        // Retry up to 10 times (2 seconds total)
+        for (int i = 0; i < 10; i++)
+        {
+            try
+
+            {
+                await JSRuntime.InvokeVoidAsync("initFullCalendar", dotNetRef, apiBase.ToString());
+                Console.WriteLine("Calendar initialized successfully");
+                return;
+            }
+            catch (JSException ex) when (ex.Message.Contains("initFullCalendar' was undefined"))
+            {
+                Console.WriteLine($"JS not ready, retry {i+1}/10...");
+                await Task.Delay(200);
+            }
+        }
+
+        throw new InvalidOperationException("Failed to initialize calendar - JS not loaded");
+    }
+
+
+    [JSInvokable]
+    public async Task OnDateClick(string dateStr)
+    {
+        if (DateTime.TryParse(dateStr, out var date))
+        {
+            await formModal.Show(date);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnEventClick(string eventId)
+    {
+        Console.WriteLine($"Clicked event ID: {eventId}");
+        // show details / edit
+    }
+
+    private async Task RefreshCalendarAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("refetchCalendar");
+            Console.WriteLine("Calendar refreshed");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to refresh calendar: {ex.Message}");
+        }
+    }
+
+    public async Task LoadDoctors()
+    {
+        try
+        {
+            var fetchedDoctors = await DoctorService.GetAllAsync();
+            if (fetchedDoctors != null)
+            {
+                doctors = fetchedDoctors.ToList();
+            }
+            else
+            {
+                Console.WriteLine("No doctors found");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading doctors: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+    }
+
+    private async Task LoadDepartments()
+    {
+        try
+        {
+            var categoryId = 1;
+            var fetchdepartments = await ReferenceDataService.GetByCategoryAsync(categoryId);
+            if (fetchdepartments!.Data != null)
+            {
+                departments = fetchdepartments.Data.ToList();
+            }
+            else
+            {
+                Console.WriteLine("No doctors found");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading departments: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+    }
+
+    [Inject] private IHttpClientFactory HttpFactory { get; set; } = default!;
+
+    private string GetAppointmentsApiUrl(DateTime start, DateTime end)
+    {
+        var uriBuilder = new UriBuilder("http://localhost:5297/api/appointments");
+        var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+
+        query["start"] = start.ToString("o");
+        query["end"] = end.ToString("o");
+
+        if (!string.IsNullOrEmpty(SelectedDoctorId))
+            query["doctorId"] = SelectedDoctorId;
+
+        if (!string.IsNullOrEmpty(SelectedDeptId))
+            query["departmentId"] = SelectedDeptId;
+
+        uriBuilder.Query = query.ToString();
+        return uriBuilder.ToString();
+    }
+
+
+    public void Dispose()
+    {
+        // cleanup if needed
+    }
+
+
+
+    private async Task UpdateFiltersAndRefresh()
+    {
+        Console.WriteLine($"Filters changed: Doctor={SelectedDoctorId}, Dept={SelectedDeptId}");
+        await JSRuntime.InvokeVoidAsync("updateCalendarFilters",SelectedDoctorId ?? "",SelectedDeptId ?? "");
+
+        await RefreshCalendarAsync();
+    }
+
+
+
+}
