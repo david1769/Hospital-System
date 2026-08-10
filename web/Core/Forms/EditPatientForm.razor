@@ -1,0 +1,54 @@
+﻿@page "/patients/edit/{Id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3 class="text-3xl font-bold text-gray-900 mb-6">Edit Patient Record (ID: @Id)</h3>
+
+@if (patient == null && string.IsNullOrEmpty(errorMessage))
+{
+    <p class="text-indigo-600"><em>Loading patient data for editing...</em></p>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md">
+        <p>@errorMessage</p>
+    </div>
+}
+else
+{
+    <!-- Pass the loaded patient data to the reusable form -->
+    <!-- The OnPatientUpdated callback navigates back to the list -->
+    <PatientForm PatientToEdit="patient" OnPatientUpdated="HandleUpdateSuccess" />
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Patient? patient;
+    private string? errorMessage;
+
+    // Fetch the single record when the component initializes
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            patient = await Http.GetFromJsonAsync<Patient>($"http://localhost:5297/api/Patient/get-by-id?id={Id}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading patient: {ex.Message}. Check your API's Get(id) endpoint.";
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        
+    }
+    private void HandleUpdateSuccess()
+    {
+        // Navigate the user back to the main patient list page
+        NavManager.NavigateTo("/patients");
+    }
+    }

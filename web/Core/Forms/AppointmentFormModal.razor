@@ -1,0 +1,242 @@
+﻿@inject HttpClient Http
+@inject IJSRuntime JS
+@inject AppointmentService AppointmentService
+@inject DoctorService DoctorService
+@inject ReferenceDataService ReferenceDataService
+@inject PatientService PatientService
+<dialog @ref = "_dialog" class="p-6 bg-white rounded-xl shadow-2xl max-w-2xl mx-auto my-10 w-full">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">New Appointment</h2>
+
+
+<EditForm Model="@appointment" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Patient</label>
+        <InputSelect @bind-Value="appointment.PatientId" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <option value="0">--Please Select--</option>
+                @foreach (var patient in patients)
+                {
+                    <option value="@patient.Id">@patient.FullName</option>
+                }
+        </InputSelect>
+            <ValidationMessage For="@(() => appointment.PatientId)" />
+          </div>
+
+<div>
+    <label class="block text-sm font-medium text-gray-700">Doctor</label>
+    <InputSelect @bind-Value="appointment.DoctorId" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <option value="0">--Please Select--</option>
+                @foreach (var doctor in doctors)
+                {
+                    <option value="@doctor.Id">@doctor.FullName</option>
+                }
+        <!-- ... -->
+    </InputSelect>
+</div>
+
+
+<div>
+    <label class="block text-sm font-medium text-gray-700">Date & Time</label>
+    <InputDate @bind-Value="appointment.AppointmentDate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+</div>
+
+<div>
+    <label class="block text-sm font-medium text-gray-700">Department</label>
+    <InputSelect @bind-Value="appointment.DepartmentId" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+      
+                <option value="0">--Please Select--</option>
+                @foreach (var department in departments)
+                {
+                    <option value="@department.Id">@department.Name</option>
+                }
+    </InputSelect>
+</div>
+
+<div>
+    <label class="block text-sm font-medium text-gray-700">Notes</label>
+    <InputTextArea @bind-Value="appointment.Notes" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+</div>
+
+<div class="flex items-center">
+    <InputCheckbox @bind-Value="appointment.FollowUpRequired" />
+    <label class="ml-2 text-sm text-gray-700">Follow-up required</label>
+</div>
+
+<div class="flex justify-end gap-4 mt-8">
+    <button type="button" @onclick="Close" class="px-5 py-2.5 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">
+        Cancel
+    </button>
+    <button type="submit" class="px-5 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700">
+        Save Appointment
+    </button>
+</div>
+</EditForm>
+</dialog>
+
+
+
+
+
+
+                
+
+
+
+@code {
+
+    [Parameter] public EventCallback OnAppointmentCreated { get; set; }
+
+    private EditContext? editContext;
+    private Appointment appointment = new();  // your model class
+    private ElementReference _dialog;
+    private List<Doctor> doctors = new();
+    private List<ReferenceData> departments = new();
+    private List<Patient> patients = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartments();
+        await LoadPatients();
+        await LoadDoctors();  
+
+        editContext = new EditContext(appointment);
+        StateHasChanged();
+    }
+     
+
+
+    public async Task Show(DateTime? prefillDate = null)
+    {
+        if (prefillDate.HasValue)
+        {
+            appointment.AppointmentDate = prefillDate.Value;
+        }
+        await JS.InvokeVoidAsync("showDialog", _dialog);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (!editContext!.Validate())
+        {
+            return;
+        }
+
+        try
+        {
+            var response = await AppointmentService.CreateAsync(appointment);
+
+            if (response)
+            {
+                // Add event to the calendar immediately using the loaded patient/doctor lists
+                var patientName = patients.FirstOrDefault(p => p.Id == appointment.PatientId)?.FullName ?? "Patient";
+                var doctorName = doctors.FirstOrDefault(d => d.Id == appointment.DoctorId)?.FullName ?? "Doctor";
+                var title = !string.IsNullOrEmpty(patientName) && !string.IsNullOrEmpty(doctorName)
+                    ? $"{patientName} - {doctorName}"
+                    : (patientName ?? doctorName ?? "Appointment");
+
+                var start = appointment.AppointmentDate?.ToString("o"); // ISO format
+
+                var eventData = new { title, start,id = appointment.Id };
+
+                try
+                {
+                    await JS.InvokeVoidAsync("addCalendarEvent", eventData);
+                }
+                catch (Exception jsEx)
+                {
+                    Console.Error.WriteLine($"Failed to add event to calendar via JS: {jsEx.Message}");
+                }
+
+                await OnAppointmentCreated.InvokeAsync(); // trigger calendar refresh as a fallback
+                await Close();
+                StateHasChanged();
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error creating appointment: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+
+    }
+
+
+    private async Task Close()
+    {
+        await JS.InvokeVoidAsync("closeDialog", _dialog);
+        appointment = new(); // reset form
+
+    }
+
+    private async Task LoadDoctors()
+    {
+        try
+        {
+            var fetchedDoctors = await DoctorService.GetAllAsync();
+            if (fetchedDoctors != null)
+            {
+                doctors = fetchedDoctors.ToList();
+            }
+            else
+            {
+                Console.WriteLine("No doctors found");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading doctors: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+    }
+    private async Task LoadDepartments()
+    {
+        try
+        {
+            var categoryId = 1;
+            var fetchdepartments = await ReferenceDataService.GetByCategoryAsync(categoryId);
+            if (fetchdepartments!.Data != null)
+            {
+                departments = fetchdepartments.Data.ToList();
+            }
+            else
+            {
+                Console.WriteLine("No doctors found");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading departments: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+    }
+
+    private async Task LoadPatients()
+    {
+
+        try
+        {
+        var fetchpatients = await PatientService.GetAllAsync();
+        if (fetchpatients != null)
+        {
+            patients = fetchpatients.ToList();
+        }
+        else
+        {
+            Console.WriteLine("No patients found");
+        }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error loading patients: {ex.Message}");
+            // Optionally show user-friendly error message
+
+        }
+   
+    }
+}
+

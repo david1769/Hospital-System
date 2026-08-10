@@ -1,0 +1,57 @@
+﻿@using global::Services
+@inject Services.IAuthService AuthService
+@inject NavigationManager NavManager
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider // <-- NEW
+
+
+<div class="bg-gray-800 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <span class="text-xl font-bold">Hospital CRM</span>
+
+            <div class="flex items-center space-x-4">
+                <NavLink class="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium" href="/patients" Match="NavLinkMatch.All">
+                    Patient Management
+                </NavLink>
+
+                @* Render login/logout link based on authentication status (simplified) *@
+                @if (isLoggedIn)
+                {
+                        <button @onclick="HandleLogout" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-md text-sm font-medium transition duration-150">
+                            Logout
+                        </button>
+                }
+                else
+                {
+                        <NavLink class="bg-indigo-600 hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium" href="/login">
+                            Login
+                        </NavLink>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isLoggedIn = false;
+
+    // Check auth status when the component initializes
+    protected override async Task OnInitializedAsync()
+    {
+        // Simple check: if a token exists, assume the user is logged in
+        var token = await AuthService.GetTokenAsync();
+        isLoggedIn = !string.IsNullOrEmpty(token);
+    }
+
+    // Logic to clear the token and redirect
+    private async Task HandleLogout()
+    {
+        await AuthService.RemoveTokenAsync();
+        // 1. Notify the state provider of the logout
+        ((CustomAuthenticationStateProvider)AuthStateProvider).NotifyUserLogout(); // <-- NEW
+        isLoggedIn = false; // Update local state
+
+        // 2. Redirect without forcing reload (the AuthStateProvider update handles UI change)
+        NavManager.NavigateTo("/login");
+    }
+}

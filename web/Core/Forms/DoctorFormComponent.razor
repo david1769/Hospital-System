@@ -1,0 +1,199 @@
+﻿@page "/doctors/create"
+@page "/doctors/edit/{Id:int}"
+@inject DoctorService DoctorService
+@inject NavigationManager NavigationManager 
+@inject ReferenceDataService ReferenceDataService
+@inject IJSRuntime JSRuntime    
+<PageTitle>Add Doctor</PageTitle>
+
+<h1>@(Id.HasValue ? "Edit Doctor" : "Add New Doctor")</h1>
+<EditForm Model = "doctor" OnValidSubmit="HandleSubmit">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-4">
+        <label>First Name</label>
+        <InputText @bind-Value="doctor.FirstName" class="form-control" />
+    </div>
+
+    <div class="mb-4">
+        <label>Last Name</label>
+        <InputText @bind-Value="doctor.LastName" class="form-control" />
+    </div>
+
+    <div class="mb-4">
+        <label>Specialty</label>
+        <InputSelect @bind-Value="doctor.SpecialtyId" class="form-control">
+            <option value="0">--Please Select--</option>
+            @foreach (var specialty in specialities)
+            {
+                <option value="@specialty.Id">@specialty.Name</option>
+            }
+
+
+        </InputSelect>
+
+    </div>
+
+    <div class="mb-4">
+        <label>Qualification</label>
+        <InputSelect @bind-Value="doctor.QualificationId" class="form-control">
+            <option value="0">--Please Select--</option>
+            @foreach (var qualification in qualifications)
+            {
+                <option value="@qualification.Id">@qualification.Name</option>
+            }
+
+
+        </InputSelect>
+
+    </div>
+
+    <div class="mb-4">
+        <label>License Number</label>
+        <InputNumber @bind-Value="doctor.LicenseNumber" class="form-control" />
+    </div>
+
+    <div class="mb-4">
+        <label>Profile Description</label>
+        <InputText @bind-Value="doctor.ProfileDescription" class="form-control" />
+    </div>
+
+    <div class="mb-4">
+        <label>Years of Experience</label>
+        <InputNumber @bind-Value="doctor.YearsOfExperience" class="form-control" />
+    </div>
+
+    <div class="mb-4">
+        <label>Email</label>
+        <InputText @bind-Value="doctor.Email" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="/doctors" class="btn btn-secondary">Cancel</a>
+
+    
+    </EditForm>
+
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Doctor doctor = new();
+    private List<ReferenceData> specialities = new();
+    private List<ReferenceData> qualifications = new();
+    private bool loading = true;
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReferenceData();
+        await LoadQualificationReferenceData();
+
+        if (Id.HasValue && Id.Value > 0)
+        {
+            // Edit mode: load existing doctor
+            var fetched = await DoctorService.GetByIdAsync(Id.Value);
+            if (fetched != null)
+            {
+                doctor = fetched;
+            }
+            else
+            {
+                // Optional: show message
+                Console.WriteLine("Doctor not found");
+            }
+            loading = false;
+        }
+
+
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSaving = true;
+        try
+        {
+            bool success;
+            if (Id.HasValue && Id.Value > 0)
+            {
+                success = await DoctorService.UpdateAsync(doctor);
+
+            }
+            else
+            {
+                success = await DoctorService.CreateAsync(doctor);
+            }
+
+            if (success)
+            {
+                // Navigate back to list or show success message
+                NavigationManager.NavigateTo("/doctors");
+            }
+            else
+            {
+                // Optional: show error message
+                Console.WriteLine("Failed to save doctor. Please try again.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle error (e.g., show a message to the user)
+            Console.Error.WriteLine($"Error creating doctor: {ex.Message}");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+
+    public async Task LoadReferenceData()
+    {
+        try
+        {
+            var categoryId = 3;
+            var fetchReferenceData = await ReferenceDataService.GetByCategoryAsync(categoryId);
+            if (fetchReferenceData?.Data != null)
+            {
+                specialities = fetchReferenceData.Data;
+            }
+            else
+            {
+                Console.WriteLine("No reference data found for the specified category.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle error (e.g., show a message to the user)
+            Console.Error.WriteLine($"Error loading reference data: {ex.Message}");
+        }
+    }
+
+
+    public async Task LoadQualificationReferenceData()
+    {
+        try
+        {
+            var categoryId = 5;
+            var fetchReferenceData = await ReferenceDataService.GetByCategoryAsync(categoryId);
+            if (fetchReferenceData?.Data != null)
+            {
+                qualifications = fetchReferenceData.Data;
+            }
+            else
+            {
+                Console.WriteLine("No reference data found for the specified category.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle error (e.g., show a message to the user)
+            Console.Error.WriteLine($"Error loading reference data: {ex.Message}");
+        }
+    }
+  
+
+
+
+}

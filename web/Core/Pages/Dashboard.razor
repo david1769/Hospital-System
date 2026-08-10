@@ -1,0 +1,169 @@
+﻿@page "/dashboard"
+@inject DashboardService DashboardService
+@inject NavigationManager Navigation
+
+<PageTitle>Dashboard</PageTitle>
+
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+
+        <!-- Total Patients -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Total Patients</p>
+                    <p class="text-4xl font-bold text-gray-800 mt-2">@totalPatients</p>
+                </div>
+                <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl">
+                    👥
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Appointments -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Today's Appointments</p>
+                    <p class="text-4xl font-bold text-emerald-600 mt-2">@todayCount</p>
+                </div>
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-3xl">
+                    📅
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Doctors -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Active Doctors</p>
+                    <p class="text-4xl font-bold text-amber-600 mt-2">@doctorsCount</p>
+                </div>
+                <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-3xl">
+                    👨‍⚕️
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Appointments -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500">Pending Appointments</p>
+                    <p class="text-4xl font-bold text-orange-600 mt-2">@pendingCount</p>
+                </div>
+                <div class="w-14 h-14 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center text-3xl">
+                    ⏳
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Today's Appointments List -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold">Today's Appointments</h2>
+                <button @onclick='() => Navigation.NavigateTo("/appointment-scheduler")'
+                        class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    View All →
+                </button>
+            </div>
+
+            @if (todayAppointments == null || !todayAppointments.Any())
+            {
+                <p class="text-gray-500 py-10 text-center">No appointments scheduled for today.</p>
+            }
+            else
+            {
+                <div class="space-y-3">
+                    @foreach (var app in todayAppointments.Take(6))
+                    {
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition">
+                            <div>
+                                <p class="font-medium text-gray-800">@app.PatientName</p>
+                                <p class="text-sm text-gray-500">
+                                    @app.DoctorName • @app.AppointmentDate?.ToLocalTime().ToString("HH:mm")
+                                </p>
+                            </div>
+                            <span class="px-3 py-1.5 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
+                                @app.StatusName
+                            </span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-3xl shadow p-6">
+            <h2 class="text-xl font-semibold mb-6">Quick Actions</h2>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button @onclick='() => Navigation.NavigateTo("/create-patient")'
+                        class="p-5 bg-blue-50 hover:bg-blue-100 rounded-3xl text-left transition">
+                    <div class="text-3xl mb-2">👤</div>
+                    <p class="font-semibold text-gray-800">Register Patient</p>
+                    <p class="text-sm text-gray-500 mt-1">Add new patient record</p>
+                </button>
+
+                <button @onclick='() => Navigation.NavigateTo("/appointment-scheduler")'
+                        class="p-5 bg-emerald-50 hover:bg-emerald-100 rounded-3xl text-left transition">
+                    <div class="text-3xl mb-2">📅</div>
+                    <p class="font-semibold text-gray-800">Book Appointment</p>
+                    <p class="text-sm text-gray-500 mt-1">Schedule new visit</p>
+                </button>
+
+                <button @onclick='() => Navigation.NavigateTo("/doctors")'
+                        class="p-5 bg-amber-50 hover:bg-amber-100 rounded-3xl text-left transition">
+                    <div class="text-3xl mb-2">👨‍⚕️</div>
+                    <p class="font-semibold text-gray-800">Manage Doctors</p>
+                    <p class="text-sm text-gray-500 mt-1">View doctor roster</p>
+                </button>
+
+                <button @onclick='() => Navigation.NavigateTo("/patients")'
+                        class="p-5 bg-purple-50 hover:bg-purple-100 rounded-3xl text-left transition">
+                    <div class="text-3xl mb-2">📋</div>
+                    <p class="font-semibold text-gray-800">View All Patients</p>
+                    <p class="text-sm text-gray-500 mt-1">Access full records</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int totalPatients = 0;
+    private int todayCount = 0;
+    private int doctorsCount = 0;
+    private int pendingCount = 0;
+
+    private List<Appointment> todayAppointments = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            totalPatients = await DashboardService.GetTotalPatientsCountAsync();
+            todayCount = await DashboardService.GetTodayAppointmentsCountAsync();
+            doctorsCount = await DashboardService.GetActiveDoctorsCountAsync();
+            pendingCount = await DashboardService.GetPendingAppointmentsCountAsync();
+
+            todayAppointments = await DashboardService.GetTodayAppointmentsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading dashboard: {ex.Message}");
+        }
+    }
+}
