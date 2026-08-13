@@ -85,7 +85,16 @@ builder.Services.AddTransient<IQueryRepository<ReferenceData>, ReferenceDataRepo
 builder.Services.AddTransient<IQueryRepository<ReferenceDataCategory>, ReferenceDataCategoryRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program)); // Add this line
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNetlify", policy =>
+    {
+        policy.WithOrigins("https://hospital-websystem.netlify.app")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+              // .AllowCredentials(); // only add this if you're sending cookies/auth headers that need it
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -93,6 +102,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseCors("AllowNetlify");
 app.UseHttpsRedirection();
 app.UseCors("AllowBlazorClient");
 app.UseAuthentication();
