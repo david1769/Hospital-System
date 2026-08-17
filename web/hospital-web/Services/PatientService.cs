@@ -12,7 +12,7 @@ namespace hospital_web.Services
 
         public PatientService(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClient.CreateClient("AuthorizedClient");
         }
 
         public async Task<List<Patient>?> GetAllAsync()
