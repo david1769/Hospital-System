@@ -7,7 +7,7 @@ namespace hospital_web.Services
 {
     public class ReferenceDataService
     {
-        private readonly HttpClient;
+        private readonly HttpClient _httpClient;
         private const string BaseUrl = "api/ReferenceData/"; // relative if HttpClient has BaseAddress set
         private const string BaseUrlWithCategory = "api/ReferenceDataCategory/"; // relative if HttpClient has BaseAddress set
         public ReferenceDataService(HttpClient httpClient)
