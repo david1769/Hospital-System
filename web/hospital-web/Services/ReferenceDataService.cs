@@ -8,12 +8,13 @@ namespace hospital_web.Services
     public class ReferenceDataService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "api/ReferenceData/"; // relative if HttpClient has BaseAddress set
-        private const string BaseUrlWithCategory = "api/ReferenceDataCategory/"; // relative if HttpClient has BaseAddress set
-        public ReferenceDataService(HttpClient httpClient)
-        {
-            _httpClient = httpClient.CreateClient("AuthorizedClient");;
-        }
+        private const string BaseUrl = "api/ReferenceData/";
+        private const string BaseUrlWithCategory = "api/ReferenceDataCategory/";
+
+    public ReferenceDataService(IHttpClientFactory httpClientFactory)
+    {
+        _httpClient = httpClientFactory.CreateClient("AuthorizedClient");
+    }
         public async Task<List<ReferenceData>?> GetAllAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<ReferenceDataResponse>(BaseUrl + "get-all");
