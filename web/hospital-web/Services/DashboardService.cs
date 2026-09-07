@@ -11,7 +11,7 @@ public class DashboardService
         private readonly HttpClient _httpClient;
         public DashboardService(HttpClient httpClient)
         {
-            _httpClient = httpClient.CreateClient("AuthorizedClient");
+            _httpClient = httpClient.CreateClient();
         }
      
         public async Task<List<Appointment>> GetAppointmentsAsync(DateTime start, DateTime end,
