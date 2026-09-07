@@ -8,11 +8,13 @@ namespace hospital_web.Services
     public class PatientService
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private const string BaseUrl = "api/Patient/";
 
-        public PatientService(HttpClient httpClient)
+        public PatientService(IHttpClientFactory httpClientFactory,HttpClient httpClient)
         {
-            _httpClient = httpClient.CreateClient("AuthorizedClient");
+            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<List<Patient>?> GetAllAsync()
