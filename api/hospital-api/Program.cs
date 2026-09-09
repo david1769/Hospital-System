@@ -22,10 +22,16 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazorClient",
-        builder => builder.WithOrigins("http://localhost:7245", "http://localhost:5203")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod());
+    options.AddPolicy("AllowedOrigins", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:7245",
+                "http://localhost:5203",
+                "https://hospital-websystem.netlify.app"
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")
@@ -95,6 +101,8 @@ builder.Services.AddCors(options =>
               // .AllowCredentials(); // only add this if you're sending cookies/auth headers that need it
     });
 });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -102,9 +110,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-app.UseCors("AllowNetlify");
 app.UseHttpsRedirection();
-app.UseCors("AllowBlazorClient");
+app.UseCors("AllowedOrigins"); 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers(); 
