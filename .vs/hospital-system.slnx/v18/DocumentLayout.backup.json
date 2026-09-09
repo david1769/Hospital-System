@@ -1,0 +1,126 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\Hospital-system\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\services\\appointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\services\\appointmentservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\services\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\services\\patientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\services\\doctorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\services\\doctorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|c:\\users\\user\\desktop\\hospital-system\\web\\hospital-web\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{6E13F986-D89B-DC7A-B511-A1383305A4DF}|web\\hospital-web\\hospital-web.csproj|solutionrelative:web\\hospital-web\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AppointmentService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\AppointmentService.cs",
+              "RelativeDocumentMoniker": "web\\hospital-web\\Services\\AppointmentService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\AppointmentService.cs",
+              "RelativeToolTip": "web\\hospital-web\\Services\\AppointmentService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T12:56:35.253Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DashboardService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\DashboardService.cs",
+              "RelativeDocumentMoniker": "web\\hospital-web\\Services\\DashboardService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\DashboardService.cs",
+              "RelativeToolTip": "web\\hospital-web\\Services\\DashboardService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T12:55:48.152Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DoctorService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\DoctorService.cs",
+              "RelativeDocumentMoniker": "web\\hospital-web\\Services\\DoctorService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\DoctorService.cs",
+              "RelativeToolTip": "web\\hospital-web\\Services\\DoctorService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T12:53:57.931Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\.gitignore",
+              "RelativeDocumentMoniker": "web\\hospital-web\\.gitignore",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\.gitignore",
+              "RelativeToolTip": "web\\hospital-web\\.gitignore",
+              "ViewState": "AgIAALAAAAAAAAAAAAAAAEMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-09-07T09:10:47.819Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Program.cs",
+              "RelativeDocumentMoniker": "web\\hospital-web\\Program.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Program.cs",
+              "RelativeToolTip": "web\\hospital-web\\Program.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAAAC4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T08:41:39.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PatientService.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\PatientService.cs",
+              "RelativeDocumentMoniker": "web\\hospital-web\\Services\\PatientService.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\Hospital-system\\web\\hospital-web\\Services\\PatientService.cs",
+              "RelativeToolTip": "web\\hospital-web\\Services\\PatientService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T08:20:25.825Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

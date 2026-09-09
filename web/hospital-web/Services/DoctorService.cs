@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net.Http.Json;
+
 namespace hospital_web.Services
 {
     public class DoctorService
@@ -12,7 +12,7 @@ namespace hospital_web.Services
 
         public DoctorService(HttpClient httpClient)
         {
-            _httpClient = httpClient.CreateClient();;
+            _httpClient = httpClient;
         }
 
         public async Task<List<Doctor>?> GetAllAsync()
@@ -45,20 +45,15 @@ namespace hospital_web.Services
             return response.IsSuccessStatusCode;
         }
 
-
         public async Task<PagedResponse<Doctor>> SearchPagedAsync(string term)
         {
             try
             {
                 var url = $"api/Doctor/find?Search={Uri.EscapeDataString(term)}";
-
-                Console.WriteLine($"Searching: {url}");
-
                 var responseMessage = await _httpClient.GetAsync(url);
                 responseMessage.EnsureSuccessStatusCode();
 
                 var response = await responseMessage.Content.ReadFromJsonAsync<PagedResponse<Doctor>>();
-
                 return response ?? new PagedResponse<Doctor>();
             }
             catch (Exception ex)
@@ -67,13 +62,11 @@ namespace hospital_web.Services
                 return new PagedResponse<Doctor>();
             }
         }
+
         public async Task<List<Doctor>?> GetActiveDoctorsCountAsync()
         {
             var response = await _httpClient.GetFromJsonAsync<DoctorResponse>(BaseUrl + "count");
             return response?.Data;
         }
-
-
-
     }
 }

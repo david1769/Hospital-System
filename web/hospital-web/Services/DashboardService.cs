@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Net.Http.Json;
 namespace hospital_web.Services
 {
   
@@ -11,7 +10,7 @@ public class DashboardService
         private readonly HttpClient _httpClient;
         public DashboardService(HttpClient httpClient)
         {
-            _httpClient = httpClient.CreateClient();
+            _httpClient = httpClient;
         }
      
         public async Task<List<Appointment>> GetAppointmentsAsync(DateTime start, DateTime end,

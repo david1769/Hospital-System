@@ -12,7 +12,7 @@ namespace hospital_web.Services
 
         public AppointmentService(HttpClient httpClient)
         {
-            _httpClient = httpClient.CreateClient();   
+            _httpClient = httpClient;   
         }
 
         public async Task<List<Appointment>?> GetAllAsync()
