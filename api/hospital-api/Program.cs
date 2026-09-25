@@ -18,7 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
@@ -90,17 +89,8 @@ builder.Services.AddTransient<IQueryRepository<Patient>, PatientRepository>();
 builder.Services.AddTransient<IQueryRepository<ReferenceData>, ReferenceDataRepository>();
 builder.Services.AddTransient<IQueryRepository<ReferenceDataCategory>, ReferenceDataCategoryRepository>();
 
-builder.Services.AddAutoMapper(typeof(Program)); // Add this line
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowNetlify", policy =>
-    {
-        policy.WithOrigins("https://hospital-websystem.netlify.app")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-              // .AllowCredentials(); // only add this if you're sending cookies/auth headers that need it
-    });
-});
+builder.Services.AddAutoMapper(typeof(Program)); 
+
 
 
 var app = builder.Build();
