@@ -7,7 +7,7 @@ namespace hospital_api.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; } = DateTime.UtcNow;
         public bool? Gender { get; set; }
         public long? NationalIdNumber { get; set; }
         public long? HealthInsuranceNumber { get; set; }

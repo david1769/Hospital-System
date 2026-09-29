@@ -24,7 +24,7 @@ namespace hospital_api.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Patient>().HasData(
-                new Patient { Id = 1, FirstName = "John",LastName = "Doe", DateOfBirth = new DateTime(1990, 1, 1),Gender = true,PhoneNumber = 012334944,Address = "Washington Street Akasia",EmergencyContact = 038388832 }
+                new Patient { Id = 1, FirstName = "John",LastName = "Doe", DateOfBirth = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc), CreatedAt = null, UpdatedAt = null, Gender = true,PhoneNumber = 012334944,Address = "Washington Street Akasia",EmergencyContact = 038388832 }
             );
 
             modelBuilder.Entity<Appointment>(entity =>

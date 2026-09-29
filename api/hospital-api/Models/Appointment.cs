@@ -9,7 +9,7 @@ namespace hospital_api.Models
         public int? PatientId { get; set; }
         public Doctor? Doctor { get; set; }
         public int? DoctorId { get; set; }
-        public DateTime? AppointmentDate  { get; set; }
+        public DateTime? AppointmentDate  { get; set; } = DateTime.UtcNow;
         public ReferenceData? Status { get; set; }
         public int? StatusId { get; set; }
         public ReferenceData? Department { get; set; } 
