@@ -34,8 +34,39 @@ builder.Services.AddCors(options =>
 });
 
 
+var databaseConnection = builder.Configuration["DATABASE_URL"]
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(databaseConnection))
+{
+    throw new InvalidOperationException("Set DATABASE_URL or ConnectionStrings:DefaultConnection.");
+}
+
+if (Uri.TryCreate(databaseConnection, UriKind.Absolute, out var databaseUri)
+    && (databaseUri.Scheme.Equals("postgres", StringComparison.OrdinalIgnoreCase)
+        || databaseUri.Scheme.Equals("postgresql", StringComparison.OrdinalIgnoreCase)))
+{
+    var credentials = databaseUri.UserInfo.Split(':', 2);
+    var databaseName = Uri.UnescapeDataString(databaseUri.AbsolutePath.Trim('/'));
+
+    if (credentials.Length != 2 || string.IsNullOrWhiteSpace(databaseName))
+    {
+        throw new InvalidOperationException("DATABASE_URL must include a username, password, and database name.");
+    }
+
+    databaseConnection = new Npgsql.NpgsqlConnectionStringBuilder
+    {
+        Host = databaseUri.Host,
+        Port = databaseUri.IsDefaultPort ? 5432 : databaseUri.Port,
+        Database = databaseName,
+        Username = Uri.UnescapeDataString(credentials[0]),
+        Password = Uri.UnescapeDataString(credentials[1]),
+        SslMode = Npgsql.SslMode.Require
+    }.ConnectionString;
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(databaseConnection));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
