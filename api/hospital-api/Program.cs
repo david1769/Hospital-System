@@ -29,7 +29,10 @@ builder.Services.AddCors(options =>
                 "https://hospital-websystem.netlify.app"
               )
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials()          // ← add this
+              .SetIsOriginAllowedToAllowWildcardSubdomains();
+              
     });
 });
 
@@ -61,7 +64,9 @@ if (Uri.TryCreate(databaseConnection, UriKind.Absolute, out var databaseUri)
         Database = databaseName,
         Username = Uri.UnescapeDataString(credentials[0]),
         Password = Uri.UnescapeDataString(credentials[1]),
-        SslMode = Npgsql.SslMode.Require
+        SslMode = Npgsql.SslMode.Require,
+        TrustServerCertificate = true
+
     }.ConnectionString;
 }
 
