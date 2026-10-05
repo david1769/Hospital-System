@@ -33,7 +33,7 @@ namespace hospital_api.Services
 
         public async Task<CountResponse> GetTodaysAppointmentsCountAsync()
         {
-            var today = DateTime.Today;               
+            var today = DateTime.UtcNow.Date;               
             var tomorrow = today.AddDays(1);          
 
             var count = await queryRepository.CountAsync(a =>
