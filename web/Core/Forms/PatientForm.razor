@@ -117,11 +117,11 @@
             // --- 4. THE POST vs. PUT LOGIC SWITCH ---
             if (NewPatient.Id != 0)
             {
-                response = await Http.PutAsJsonAsync($"http://localhost:5297/api/Patient/{NewPatient.Id}", NewPatient);
+                response = await Http.PutAsJsonAsync($"https://hospital-api-ya93.onrender.com/api/Patient/{NewPatient.Id}", NewPatient);
             }
             else
             {
-                response = await Http.PostAsJsonAsync("http://localhost:5297/api/Patient/create-patient", NewPatient);
+                response = await Http.PostAsJsonAsync("https://hospital-api-ya93.onrender.com/api/Patient/create-patient", NewPatient);
             }
 
             // --- Response Handling and Callback Invocation ---

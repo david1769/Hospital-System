@@ -29,10 +29,7 @@ builder.Services.AddCors(options =>
                 "https://hospital-websystem.netlify.app"
               )
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials()          // ← add this
-              .SetIsOriginAllowedToAllowWildcardSubdomains();
-              ;
+              .AllowAnyMethod();
     });
 });
 

@@ -34,7 +34,7 @@ else
     {
         try
         {
-            patient = await Http.GetFromJsonAsync<Patient>($"http://localhost:5297/api/Patient/get-by-id?id={Id}");
+            patient = await Http.GetFromJsonAsync<Patient>($"https://hospital-api-ya93.onrender.com/api/Patient/get-by-id?id={Id}");
         }
         catch (Exception ex)
         {

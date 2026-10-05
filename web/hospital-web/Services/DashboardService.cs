@@ -47,7 +47,7 @@ public class DashboardService
 
         private string BuildAppointmentsUrl(DateTime start, DateTime end, string? doctorId, string? deptId)
         {
-            var uri = new UriBuilder("http://localhost:5297/api/appointments");
+            var uri = new UriBuilder("https://hospital-api-ya93.onrender.com/api/appointments");
             var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
             query["start"] = start.ToString("o");
             query["end"] = end.ToString("o");
