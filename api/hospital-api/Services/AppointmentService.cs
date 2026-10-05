@@ -33,7 +33,7 @@ namespace hospital_api.Services
 
         public async Task<CountResponse> GetTodaysAppointmentsCountAsync()
         {
-            var today = DateTime.UtcNow.Date;               
+            var today = DateTime.UtcNow.Date; // Get the current date in UTC without the time component    
             var tomorrow = today.AddDays(1);          
 
             var count = await queryRepository.CountAsync(a =>
@@ -54,7 +54,7 @@ namespace hospital_api.Services
 
         public async Task<DataResponse<List<AppointmentResponse>>> GetTodaysAppointmentsList()
         {
-            var today = DateTime.Today;
+            var today = DateTime.UtcNow.Date;
             var tomorrow = today.AddDays(1);
 
             var appointments = await queryRepository.Filter(a =>
