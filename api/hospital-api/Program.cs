@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowCredentials()          // ← add this
               .SetIsOriginAllowedToAllowWildcardSubdomains();
-              
+              ;
     });
 });
 

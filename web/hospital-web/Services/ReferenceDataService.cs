@@ -13,7 +13,8 @@ namespace hospital_web.Services
 
     public ReferenceDataService(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClientFactory.CreateClient();
+     _httpClient = httpClientFactory.CreateClient("AuthorizedClient");
+
     }
         public async Task<List<ReferenceData>?> GetAllAsync()
         {

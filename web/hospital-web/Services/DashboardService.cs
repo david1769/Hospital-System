@@ -8,9 +8,12 @@ namespace hospital_web.Services
 public class DashboardService
 {
         private readonly HttpClient _httpClient;
-        public DashboardService(HttpClient httpClient)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public DashboardService(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+          _httpClient = httpClientFactory.CreateClient("AuthorizedClient");
+
         }
      
         public async Task<List<Appointment>> GetAppointmentsAsync(DateTime start, DateTime end,

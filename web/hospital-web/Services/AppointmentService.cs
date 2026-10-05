@@ -9,10 +9,13 @@ namespace hospital_web.Services
 {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "api/Appointment/";
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public AppointmentService(HttpClient httpClient)
+
+        public AppointmentService(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;   
+           _httpClient = httpClientFactory.CreateClient("AuthorizedClient");
+
         }
 
         public async Task<List<Appointment>?> GetAllAsync()
